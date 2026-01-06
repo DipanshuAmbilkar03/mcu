@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Marvel Movie Tracker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #0f172a;
+    color: #e5e7eb;
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.section {
+    background: #111827;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.section h2 {
+    margin-top: 0;
+    color: #38bdf8;
+}
+
+.movie {
+    display: flex;
+    align-items: center;
+    margin: 6px 0;
+}
+
+.movie input {
+    margin-right: 10px;
+}
+
+.progress {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #a5b4fc;
+}
+
+footer {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 13px;
+    opacity: 0.7;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Marvel Cinematic Tracker</h1>
+<p style="text-align:center;">Tick the movies you have watched</p>
+
+<!-- MCU -->
+<div class="section">
+<h2>Marvel Cinematic Universe (MCU)</h2>
+<div id="mcu"></div>
+<div class="progress" id="mcu-progress"></div>
+</div>
+
+<!-- Sony SSU -->
+<div class="section">
+<h2>Sony Spider-Man Universe</h2>
+<div id="sony"></div>
+<div class="progress" id="sony-progress"></div>
+</div>
+
+<!-- Spider-Verse -->
+<div class="section">
+<h2>Sony Spider-Verse (Animated)</h2>
+<div id="spiderverse"></div>
+<div class="progress" id="spiderverse-progress"></div>
+</div>
+
+<!-- X-Men -->
+<div class="section">
+<h2>X-Men Universe (Fox)</h2>
+<div id="xmen"></div>
+<div class="progress" id="xmen-progress"></div>
+</div>
+
+<!-- Fantastic Four -->
+<div class="section">
+<h2>Fantastic Four</h2>
+<div id="ff"></div>
+<div class="progress" id="ff-progress"></div>
+</div>
+
+<!-- Standalone -->
+<div class="section">
+<h2>Standalone / Marvel Knights</h2>
+<div id="standalone"></div>
+<div class="progress" id="standalone-progress"></div>
+</div>
+
+<footer>
+Marvel Movie Tracker | LocalStorage Enabled
+</footer>
+
+<script>
+const data = {
+    mcu: [
+        "Iron Man (2008)", "The Incredible Hulk (2008)", "Iron Man 2 (2010)",
+        "Thor (2011)", "Captain America: The First Avenger (2011)",
+        "The Avengers (2012)", "Iron Man 3 (2013)", "Thor: The Dark World (2013)",
+        "Captain America: The Winter Soldier (2014)", "Guardians of the Galaxy (2014)",
+        "Avengers: Age of Ultron (2015)", "Ant-Man (2015)",
+        "Captain America: Civil War (2016)", "Doctor Strange (2016)",
+        "Guardians of the Galaxy Vol. 2 (2017)", "Spider-Man: Homecoming (2017)",
+        "Thor: Ragnarok (2017)", "Black Panther (2018)",
+        "Avengers: Infinity War (2018)", "Ant-Man and the Wasp (2018)",
+        "Captain Marvel (2019)", "Avengers: Endgame (2019)",
+        "Spider-Man: Far From Home (2019)", "Black Widow (2021)",
+        "Shang-Chi and the Legend of the Ten Rings (2021)", "Eternals (2021)",
+        "Spider-Man: No Way Home (2021)",
+        "Doctor Strange in the Multiverse of Madness (2022)",
+        "Thor: Love and Thunder (2022)", "Black Panther: Wakanda Forever (2022)",
+        "Ant-Man and the Wasp: Quantumania (2023)",
+        "Guardians of the Galaxy Vol. 3 (2023)",
+        "The Marvels (2023)", "Deadpool & Wolverine (2024)"
+    ],
+    sony: [
+        "Venom (2018)", "Venom: Let There Be Carnage (2021)",
+        "Morbius (2022)", "Madame Web (2024)",
+        "Venom: The Last Dance (2024)", "Kraven the Hunter (2024)"
+    ],
+    spiderverse: [
+        "Into the Spider-Verse (2018)",
+        "Across the Spider-Verse (2023)",
+        "Beyond the Spider-Verse (Upcoming)"
+    ],
+    xmen: [
+        "X-Men (2000)", "X2 (2003)", "The Last Stand (2006)",
+        "X-Men Origins: Wolverine (2009)", "First Class (2011)",
+        "The Wolverine (2013)", "Days of Future Past (2014)",
+        "Deadpool (2016)", "Apocalypse (2016)", "Logan (2017)",
+        "Deadpool 2 (2018)", "Dark Phoenix (2019)",
+        "The New Mutants (2020)"
+    ],
+    ff: [
+        "Fantastic Four (2005)", "Rise of the Silver Surfer (2007)",
+        "Fantastic Four (2015)"
+    ],
+    standalone: [
+        "Blade (1998)", "Blade II (2002)", "Blade: Trinity (2004)",
+        "Daredevil (2003)", "Elektra (2005)",
+        "The Punisher (2004)", "Punisher: War Zone (2008)",
+        "Ghost Rider (2007)", "Spirit of Vengeance (2011)",
+        "Hulk (2003)"
+    ]
+};
+
+function render(section, elementId, progressId) {
+    const container = document.getElementById(elementId);
+    container.innerHTML = "";
+
+    let watched = 0;
+
+    data[section].forEach(movie => {
+        const key = section + movie;
+        const checked = localStorage.getItem(key) === "true";
+        if (checked) watched++;
+
+        const div = document.createElement("div");
+        div.className = "movie";
+
+        div.innerHTML = `
+            <input type="checkbox" ${checked ? "checked" : ""}
+            onchange="localStorage.setItem('${key}', this.checked); location.reload();">
+            ${movie}
+        `;
+
+        container.appendChild(div);
+    });
+
+    document.getElementById(progressId).innerText =
+        `Watched ${watched} / ${data[section].length}`;
+}
+
+render("mcu", "mcu", "mcu-progress");
+render("sony", "sony", "sony-progress");
+render("spiderverse", "spiderverse", "spiderverse-progress");
+render("xmen", "xmen", "xmen-progress");
+render("ff", "ff", "ff-progress");
+render("standalone", "standalone", "standalone-progress");
+</script>
+
+</body>
+</html>
